@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Kamil ❤️ Simoné</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(160deg, #fff1f6, #ffe4ec);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* soft floating hearts */
+.heart {
+  position: absolute;
+  font-size: 18px;
+  animation: floatUp 9s linear infinite;
+  opacity: 0.28;
+}
+@keyframes floatUp {
+  from { transform: translateY(110vh); }
+  to { transform: translateY(-10vh); }
+}
+
+/* shared card style */
+.card {
+  width: 520px;
+  max-width: 94vw;
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 34px 30px 40px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+  text-align: center;
+  animation: pop .6s ease;
+  position: relative;
+}
+
+@keyframes pop {
+  from { transform: scale(.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+h1 { margin: 10px 0 8px; font-weight: 600; }
+
+.sub { opacity: .65; font-size: 14px; }
+
+button {
+  border: none;
+  border-radius: 16px;
+  padding: 14px 22px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s, opacity .15s;
+}
+
+button:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,.15); }
+
+.primary {
+  background: #111827;
+  color: white;
+}
+
+.accent {
+  background: #ff4f8b;
+  color: white;
+  box-shadow: 0 10px 22px rgba(255,79,139,.35);
+}
+
+.soft {
+  background: #f3f4f6;
+  color: #111;
+}
+
+/* envelope screen */
+#incoming { display: block; }
+
+.envelope {
+  font-size: 64px;
+  animation: bounce 1.6s infinite;
+}
+
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* message screen */
+#message { display: none; text-align: left; }
+
+.msg-title {
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.msg-body {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #374151;
+  white-space: pre-line;
+}
+
+.center-btn { text-align:center; margin-top: 22px; }
+
+/* valentine screen */
+#valentine { display: none; }
+
+.names {
+  font-size: 18px;
+  opacity: .7;
+  margin-bottom: 6px;
+}
+
+.big-heart {
+  font-size: 60px;
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.14); }
+  100% { transform: scale(1); }
+}
+
+.btn-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+#success {
+  display: none;
+  margin-top: 22px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #be185d;
+}
+
+/* excited character */
+#celebrate {
+  display: none;
+  margin-top: 18px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.character {
+  font-size: 56px;
+  display: inline-block;
+  animation: jump 0.6s ease-in-out infinite;
+}
+
+@keyframes jump {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-18px); }
+  100% { transform: translateY(0); }
+}
+
+.kiss {
+  position: absolute;
+  font-size: 26px;
+  animation: kissFly 2.8s linear forwards;
+}
+
+@keyframes kissFly {
+  from { transform: translateY(0) scale(.7); opacity: 1; }
+  to { transform: translateY(-180px) scale(1.4); opacity: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<script>
+for (let i = 0; i < 22; i++) {
+  const h = document.createElement('div');
+  h.className = 'heart';
+  h.innerHTML = '❤';
+  h.style.left = Math.random()*100 + 'vw';
+  h.style.animationDuration = (7 + Math.random()*4) + 's';
+  document.body.appendChild(h);
+}
+</script>
+
+<!-- Incoming message screen -->
+<div id="incoming" class="card">
+  <div class="envelope">✉️</div>
+  <h1>Incoming message</h1>
+  <div class="sub">From Simoné ❤️</div>
+  <div class="center-btn">
+    <button id="openMsgBtn" class="primary">Open</button>
+  </div>
+</div>
+
+<!-- Long appreciation message -->
+<div id="message" class="card">
+  <div class="msg-title">For you, Kamil 🤍</div>
+  <div class="msg-body">
+I just wanted to say how deeply I appreciate you.
+
+Thank you for being patient with me, for staying, for trying, and for caring even when things feel complicated or heavy. I know long distance isn’t always easy, and I know emotions can get messy — but through all of it, you still show up, and that means more to me than you probably realize.
+
+You make me feel safe, chosen, and supported. I love the way you think, the way you care, and the way you are with me. Even on the hard days, I would still pick you.
+
+I never want to bring hurt into your world — only warmth, softness, and love. You are truly important to me, and I’m so grateful that you’re mine.
+  </div>
+  <div class="center-btn">
+    <button id="surpriseBtn" class="accent">Click for a surprise 💝</button>
+  </div>
+</div>
+
+<!-- Valentine screen -->
+<div id="valentine" class="card">
+  <div class="names">Simoné ❤️ Kamil</div>
+  <div class="big-heart">💗</div>
+  <h1>Will you be my Valentine?</h1>
+  <div class="sub">Long distance — same heart.</div>
+
+  <div class="btn-row" id="btnRow">
+    <button id="yesBtn" class="accent">Yes, of course 😌</button>
+    <button id="noBtn" class="soft">No</button>
+  </div>
+
+  <div id="success">Best answer ever 💞</div>
+
+  <div id="celebrate">
+    <div class="character">🥰</div>
+    <div>Yessss!!!</div>
+  </div>
+</div>
+
+<script>
+const incoming = document.getElementById('incoming');
+const message = document.getElementById('message');
+const valentine = document.getElementById('valentine');
+
+const openMsgBtn = document.getElementById('openMsgBtn');
+const surpriseBtn = document.getElementById('surpriseBtn');
+const noBtn = document.getElementById('noBtn');
+const yesBtn = document.getElementById('yesBtn');
+const row = document.getElementById('btnRow');
+const success = document.getElementById('success');
+const celebrate = document.getElementById('celebrate');
+
+openMsgBtn.onclick = () => {
+  incoming.style.display = 'none';
+  message.style.display = 'block';
+};
+
+surpriseBtn.onclick = () => {
+  message.style.display = 'none';
+  valentine.style.display = 'block';
+};
+
+let moved = false;
+function moveNo() {
+  if (!moved) {
+    moved = true;
+    noBtn.style.position = 'fixed';
+  }
+  const x = Math.random() * (window.innerWidth - 120);
+  const y = Math.random() * (window.innerHeight - 80);
+  noBtn.style.left = x + 'px';
+  noBtn.style.top = y + 'px';
+}
+
+noBtn.addEventListener('mouseenter', moveNo);
+noBtn.addEventListener('click', moveNo);
+
+function launchKisses() {
+  for (let i=0;i<10;i++){
+    const k = document.createElement('div');
+    k.className = 'kiss';
+    k.innerHTML = '💋';
+    k.style.left = (window.innerWidth/2 + (Math.random()*160-80)) + 'px';
+    k.style.top = (window.innerHeight/2 + (Math.random()*40-20)) + 'px';
+    document.body.appendChild(k);
+    setTimeout(()=>k.remove(),2800);
+  }
+}
+
+yesBtn.onclick = () => {
+  row.style.display = 'none';
+  success.style.display = 'block';
+  celebrate.style.display = 'block';
+  launchKisses();
+};
+</script>
+
+</body>
+</html>
