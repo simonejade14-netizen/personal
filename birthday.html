@@ -1,0 +1,2238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <title>Birthday Quest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        max-height: 1080px;
+        overflow: hidden;
+        background: linear-gradient(160deg, #fff1f6, #ffe4ec);
+        color: #1e293b;
+        font-family: 'Poppins', sans-serif;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        position: relative;
+      }
+
+      /* Floating hearts background */
+      .floating-heart {
+        position: fixed;
+        font-size: 18px;
+        animation: floatUp 9s linear infinite;
+        opacity: 0.28;
+        pointer-events: none;
+        z-index: 0;
+        bottom: -50px;
+      }
+
+      @keyframes floatUp {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(calc(-100vh - 50px));
+        }
+      }
+
+      /* ============================================
+         SCREEN CONTAINER SYSTEM
+         ============================================ */
+      .screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        flex-direction: column;
+        z-index: 10;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        overflow-y: auto;
+      }
+
+      .screen.active {
+        display: flex;
+        opacity: 1;
+      }
+
+      /* ============================================
+         SCREEN 1 - TITLE SCREEN
+         ============================================ */
+      #titleScreen {
+        background: transparent;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+
+      .title-content {
+        max-width: 520px;
+        width: 94vw;
+        background: #ffffff;
+        border-radius: 28px;
+        padding: 34px 30px 40px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        text-align: center;
+        animation: pop 0.6s ease;
+        position: relative;
+        z-index: 10;
+      }
+
+      @keyframes pop {
+        from {
+          transform: scale(0.92);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .title-text {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: #111827;
+        margin: 10px 0 8px;
+        line-height: 1.2;
+      }
+
+      .start-button {
+        background: #111827;
+        color: white;
+        border: none;
+        border-radius: 16px;
+        padding: 14px 22px;
+        font-size: 15px;
+        font-weight: 400;
+        font-family: inherit;
+        cursor: pointer;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s,
+          opacity 0.15s;
+        margin-top: 20px;
+      }
+
+      .start-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+      }
+
+      /* ============================================
+         SCREEN 2 - JOURNEY HUB
+         ============================================ */
+      #journeyHub {
+        background: transparent;
+        padding: 2rem;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .hub-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #111827;
+        text-align: center;
+        margin-bottom: 8px;
+      }
+
+      .hub-subtitle {
+        font-size: 14px;
+        color: #374151;
+        opacity: 0.65;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-weight: 400;
+      }
+
+      .icon-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        max-width: 600px;
+        width: 100%;
+      }
+
+      .icon-item {
+        background: #ffffff;
+        border: none;
+        border-radius: 28px;
+        padding: 2rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+        animation: pop 0.6s ease;
+        position: relative;
+      }
+
+      .icon-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
+      }
+
+      .icon-item.locked {
+        opacity: 0.5;
+        filter: grayscale(0.8);
+        position: relative;
+      }
+
+      .icon-item.locked:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Lock icon overlay */
+      .icon-item.locked::after {
+        content: '🔒';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+        font-size: 2.5rem;
+        pointer-events: none !important;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 50%;
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        line-height: 1;
+      }
+
+      .icon-emoji {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+      }
+
+      .icon-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #111827;
+      }
+
+      .back-button {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #f3f4f6;
+        color: #111;
+        border: none;
+        border-radius: 16px;
+        padding: 14px 22px;
+        font-size: 15px;
+        font-weight: 400;
+        font-family: inherit;
+        cursor: pointer;
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.1);
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+        z-index: 100;
+      }
+
+      .back-button:hover {
+        transform: translateX(-50%) translateY(-2px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+      }
+
+      /* ============================================
+         SCREEN 3 - CAKE PAGE
+         ============================================ */
+      #cakeScreen {
+        background: transparent;
+        padding: 2rem;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .cake-container {
+        max-width: 520px;
+        width: 94vw;
+        text-align: center;
+      }
+
+      .cake-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #111827;
+        margin: 10px 0 8px;
+      }
+
+      .cake-subtitle {
+        font-size: 14px;
+        color: #374151;
+        opacity: 0.65;
+        margin-bottom: 2rem;
+        font-weight: 400;
+        line-height: 1.6;
+      }
+
+      .cake-scene {
+        background: #ffffff;
+        border: none;
+        border-radius: 28px;
+        padding: 34px 30px 40px;
+        margin: 2rem 0;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        animation: pop 0.6s ease;
+        z-index: 1;
+      }
+
+      .cake {
+        position: relative;
+        transition: transform 0.2s;
+      }
+
+      .cake-instruction {
+        font-size: 14px;
+        color: #374151;
+        opacity: 0.65;
+        margin-top: 1.5rem;
+        font-weight: 400;
+        text-align: center;
+      }
+
+      .make-wish {
+        font-size: 18px;
+        color: #ff4f8b;
+        font-weight: 600;
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+        text-align: center;
+      }
+
+      .cake-instructions-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 1.5rem;
+      }
+
+      .cake-visual {
+        width: 350px;
+        height: 200px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+      }
+
+      .cake-layer {
+        width: 280px;
+        height: 80px;
+        background: #ff85a2;
+        border-radius: 10px;
+        margin: auto;
+        position: relative;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .cake-icing {
+        width: 300px;
+        height: 35px;
+        background: #fff;
+        border-radius: 15px;
+        position: absolute;
+        top: -18px;
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .candles-container {
+        position: absolute;
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 280px;
+        height: 50px;
+        z-index: 2;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+
+      .candle {
+        position: relative;
+        width: 10px;
+        height: 40px;
+        background: #6c5ce7;
+        cursor: pointer;
+        animation: flicker 1.5s infinite;
+        border-radius: 2px;
+        pointer-events: auto;
+        margin: 0 8px;
+      }
+
+      .candle::before {
+        content: '';
+        position: absolute;
+        top: -18px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 12px;
+        height: 18px;
+        background: #f59e0b;
+        border-radius: 50%;
+        animation: flame 0.3s infinite alternate;
+        box-shadow:
+          0 0 10px #f59e0b,
+          0 0 20px #fbbf24;
+      }
+
+      @keyframes flicker {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-1px);
+        }
+        75% {
+          transform: translateX(1px);
+        }
+      }
+
+      @keyframes flame {
+        0% {
+          transform: translateX(-50%) scaleY(1);
+        }
+        100% {
+          transform: translateX(-50%) scaleY(1.1);
+        }
+      }
+
+      .candle.blown {
+        animation: none;
+      }
+
+      .candle.blown::before {
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .confetti {
+        position: fixed;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        animation: confetti-fall 3s ease-out forwards;
+        z-index: 9998;
+        pointer-events: none;
+      }
+
+      @keyframes confetti-fall {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh) rotate(720deg);
+          opacity: 0;
+        }
+      }
+
+      /* ============================================
+         SCREEN 4 - REASONS PAGE
+         ============================================ */
+      #reasonsScreen {
+        background: transparent;
+        padding: 2rem;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .reasons-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #111827;
+        text-align: center;
+        margin: 10px 0 8px;
+      }
+
+      .reasons-subtitle {
+        font-size: 14px;
+        color: #374151;
+        opacity: 0.65;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-weight: 400;
+        line-height: 1.6;
+      }
+
+      .garden-scene {
+        background: #ffffff;
+        border: none;
+        border-radius: 28px;
+        padding: 34px 30px 40px;
+        margin: 2rem 0;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        min-height: 500px;
+        max-width: 520px;
+        width: 94vw;
+        position: relative;
+        background: linear-gradient(to bottom, #f3f4f6 0%, #e5e7eb 100%);
+        animation: pop 0.6s ease;
+        z-index: 1;
+      }
+
+      .heart {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background: #ef4444;
+        cursor: pointer;
+        transform: rotate(-45deg);
+        animation: float-heart 3s ease-in-out infinite;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        z-index: 1;
+      }
+
+      .heart::before,
+      .heart::after {
+        content: '';
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background: #ef4444;
+        border-radius: 50%;
+      }
+
+      .heart::before {
+        top: -15px;
+        left: 0;
+      }
+
+      .heart::after {
+        left: 15px;
+        top: 0;
+      }
+
+      .heart:hover {
+        transform: rotate(-45deg) scale(1.2);
+        filter: brightness(1.3);
+      }
+
+      .heart.clicked {
+        animation: heart-pop 0.5s ease-out forwards;
+      }
+
+      @keyframes float-heart {
+        0%,
+        100% {
+          transform: rotate(-45deg) translateY(0);
+        }
+        50% {
+          transform: rotate(-45deg) translateY(-15px);
+        }
+      }
+
+      @keyframes heart-pop {
+        0% {
+          transform: rotate(-45deg) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: rotate(-45deg) scale(2);
+          opacity: 0;
+        }
+      }
+
+      .heart-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #ffffff;
+        border: none;
+        border-radius: 28px;
+        padding: 34px 30px 40px;
+        z-index: 1000;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+        display: none;
+      }
+
+      .heart-modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 999;
+        display: none;
+      }
+
+      .heart-modal-backdrop.active {
+        display: block;
+      }
+
+      .heart-modal.active {
+        display: block;
+        animation: popCentered 0.6s ease;
+      }
+
+      @keyframes popCentered {
+        from {
+          transform: translate(-50%, -50%) scale(0.92);
+          opacity: 0;
+        }
+        to {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+      }
+
+      .heart-modal-content {
+        color: #374151;
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 22px;
+        font-weight: 400;
+        text-align: center;
+      }
+
+      .heart-modal-close {
+        background: #111827;
+        color: white;
+        border: none;
+        border-radius: 16px;
+        padding: 14px 22px;
+        font-size: 15px;
+        font-weight: 400;
+        font-family: inherit;
+        cursor: pointer;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+      }
+
+      .heart-modal-close:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Lock modal (same styling as heart modal) */
+      .lock-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #ffffff;
+        border: none;
+        border-radius: 28px;
+        padding: 34px 30px 40px;
+        z-index: 1000;
+        max-width: 500px;
+        width: 90vw;
+        display: none;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        text-align: center;
+      }
+
+      .lock-modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.3);
+        z-index: 999;
+        display: none;
+      }
+
+      .lock-modal-backdrop.active {
+        display: block;
+      }
+
+      .lock-modal.active {
+        display: block;
+        animation: pop 0.6s ease;
+      }
+
+      .lock-modal-content {
+        color: #374151;
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 22px;
+        font-weight: 400;
+        text-align: center;
+      }
+
+      .lock-modal-close {
+        background: #111827;
+        color: white;
+        border: none;
+        border-radius: 16px;
+        padding: 14px 22px;
+        font-size: 15px;
+        font-weight: 400;
+        font-family: inherit;
+        cursor: pointer;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s,
+          opacity 0.15s;
+      }
+
+      .lock-modal-close:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+      }
+
+      .progress-text {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #ffffff;
+        padding: 10px 16px;
+        border-radius: 16px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #111827;
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.1);
+      }
+
+      /* ============================================
+         SCREEN 5 - GIFT PAGE
+         ============================================ */
+      #giftScreen {
+        background: transparent;
+        padding: 2rem;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .gift-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #111827;
+        text-align: center;
+        margin: 10px 0 8px;
+      }
+
+      .gift-subtitle {
+        font-size: 14px;
+        color: #374151;
+        opacity: 0.65;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-weight: 400;
+        line-height: 1.6;
+      }
+
+      .party-scene {
+        background: #ffffff;
+        border: none;
+        border-radius: 28px;
+        padding: 34px 30px 40px;
+        margin: 2rem 0;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        min-height: 500px;
+        max-width: 520px;
+        width: 94vw;
+        display: flex;
+        position: relative;
+        z-index: 1;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        animation: pop 0.6s ease;
+      }
+
+      .present-box {
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .present-box:hover {
+        transform: scale(1.05);
+      }
+
+      .present-main {
+        width: 300px;
+        height: 300px;
+        background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+        border: 4px solid #f472b6;
+        border-radius: 16px;
+        position: relative;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .present-ribbon-h {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 40px;
+        background: #ec4899;
+        border: 4px solid #db2777;
+        transform: translateY(-50%);
+        border-radius: 8px;
+        transition: opacity 0.5s;
+      }
+
+      .present-ribbon-v {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        width: 40px;
+        background: #ec4899;
+        border: 4px solid #db2777;
+        transform: translateX(-50%);
+        border-radius: 8px;
+        transition: opacity 0.5s;
+      }
+
+      .present-bow {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 60px;
+        background: #ec4899;
+        border: 4px solid #db2777;
+        border-radius: 50%;
+        z-index: 3;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transition: opacity 0.5s;
+      }
+
+      .present-bow::before,
+      .present-bow::after {
+        content: '';
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background: #ec4899;
+        border: 3px solid #db2777;
+        border-radius: 50% 0 50% 50%;
+      }
+
+      .present-bow::before {
+        top: -20px;
+        left: -20px;
+      }
+
+      .present-bow::after {
+        bottom: -20px;
+        right: -20px;
+        border-radius: 50% 50% 0 50%;
+      }
+
+      .present-lid {
+        transform-origin: top center;
+        transition:
+          transform 0.5s,
+          opacity 0.5s;
+      }
+
+      .present-box.opened .present-lid {
+        transform: translateY(-100px) rotateX(-120deg);
+        opacity: 0;
+        pointer-events: none;
+        display: none;
+      }
+
+      .present-box.opened .present-ribbon-h,
+      .present-box.opened .present-ribbon-v,
+      .present-box.opened .present-bow {
+        opacity: 0;
+        pointer-events: none;
+        display: none;
+      }
+
+      .riddle-container {
+        margin-top: 2rem;
+        text-align: center;
+        display: none;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 0 10px;
+      }
+
+      .riddle-container.active {
+        display: block;
+        animation: fadeIn 0.5s;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .riddle-text {
+        color: #374151;
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        font-weight: 400;
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 16px;
+        border: none;
+        white-space: pre-line;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .answer-input {
+        background: #ffffff;
+        border: 2px solid #e5e7eb;
+        color: #111827;
+        padding: 14px 18px;
+        font-size: 15px;
+        font-family: inherit;
+        font-weight: 400;
+        text-align: center;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto 1rem;
+        display: block;
+        border-radius: 16px;
+        transition: all 0.2s;
+      }
+
+      .answer-input:focus {
+        outline: none;
+        border-color: #ff4f8b;
+        box-shadow: 0 0 0 4px rgba(255, 79, 139, 0.1);
+      }
+
+      .submit-button {
+        background: #ff4f8b;
+        color: white;
+        border: none;
+        border-radius: 16px;
+        padding: 14px 22px;
+        font-size: 15px;
+        font-weight: 400;
+        font-family: inherit;
+        cursor: pointer;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+        box-shadow: 0 10px 22px rgba(255, 79, 139, 0.35);
+      }
+
+      .submit-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(255, 79, 139, 0.4);
+      }
+
+      .gift-message {
+        margin-top: 2rem;
+        color: #be185d;
+        font-size: 20px;
+        line-height: 1.8;
+        font-weight: 600;
+        background: #fce7f3;
+        padding: 20px;
+        border-radius: 16px;
+        border: none;
+        display: none;
+        white-space: pre-line;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+      }
+
+      .gift-message.active {
+        display: block;
+        animation: fadeIn 0.5s;
+      }
+
+      .shake {
+        animation: shake 0.5s;
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-10px);
+        }
+        75% {
+          transform: translateX(10px);
+        }
+      }
+
+      /* ============================================
+         SCREEN 6 - LETTER PAGE
+         ============================================ */
+      #letterScreen {
+        background: transparent;
+        padding: 2rem;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .letter-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #111827;
+        text-align: center;
+        margin: 10px 0 8px;
+      }
+
+      .letter-subtitle {
+        font-size: 14px;
+        color: #374151;
+        opacity: 0.65;
+        text-align: center;
+        margin-bottom: 2rem;
+        font-weight: 400;
+        line-height: 1.6;
+      }
+
+      .post-office-scene {
+        background: #ffffff;
+        border: none;
+        border-radius: 28px;
+        padding: 34px 30px 40px;
+        margin: 2rem 0;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        min-height: 500px;
+        max-width: 520px;
+        width: 94vw;
+        position: relative;
+        background: linear-gradient(to bottom, #f3f4f6 0%, #e5e7eb 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pop 0.6s ease;
+      }
+
+      .envelope {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        height: 200px;
+        background: #fff;
+        border: 4px solid #e5e7eb;
+        border-radius: 12px;
+        display: block;
+        z-index: 10;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .envelope::before {
+        content: '❤️';
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 2rem;
+        z-index: 11;
+        pointer-events: none;
+        transition: opacity 0.3s;
+      }
+
+      .envelope.opened::before {
+        opacity: 0;
+        display: none;
+      }
+
+      .envelope:hover {
+        transform: translate(-50%, -50%) scale(1.05);
+      }
+
+      @keyframes slide-out {
+        0% {
+          transform: translate(-50%, -50%) translateY(100px);
+          opacity: 0;
+        }
+        100% {
+          transform: translate(-50%, -50%) translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .envelope-flap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 50%;
+        background: #fff;
+        border-bottom: 4px solid #e5e7eb;
+        border-radius: 12px 12px 0 0;
+        transform-origin: top;
+        transition: transform 0.5s;
+      }
+
+      .envelope.opened .envelope-flap {
+        transform: rotateX(-180deg);
+      }
+
+      .letter-content {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+        background: #ffffff;
+        padding: 20px;
+        color: #374151;
+        font-size: 15px;
+        line-height: 1.6;
+        overflow-y: auto;
+        display: none;
+        font-weight: 400;
+        border-radius: 16px;
+      }
+
+      .letter-content.active {
+        display: block;
+      }
+
+      .letter-text {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        text-align: left;
+      }
+
+      /* ============================================
+         RESET BUTTON
+         ============================================ */
+      .reset-button {
+        position: fixed;
+        bottom: 2rem;
+        left: 2rem;
+        background: #f3f4f6;
+        border: none;
+        color: #111;
+        border-radius: 16px;
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        font-family: inherit;
+        cursor: pointer;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s,
+          opacity 0.15s;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+      }
+
+      .reset-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        background: #e5e7eb;
+      }
+
+      /* ============================================
+         MUSIC TOGGLE
+         ============================================ */
+      .music-toggle {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: #f3f4f6;
+        border: none;
+        color: #111;
+        padding: 14px 22px;
+        font-size: 15px;
+        font-weight: 400;
+        font-family: inherit;
+        cursor: pointer;
+        z-index: 100;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+        border-radius: 16px;
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.1);
+      }
+
+      .music-toggle:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+      }
+
+      /* ============================================
+         COMPLETION CONFETTI
+         ============================================ */
+      .completion-confetti {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9999;
+      }
+
+      .confetti-piece {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        animation: confetti-rain 3s ease-out forwards;
+      }
+
+      @keyframes confetti-rain {
+        0% {
+          transform: translateY(-100px) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh) rotate(720deg);
+          opacity: 0;
+        }
+      }
+
+      /* ============================================
+         RESPONSIVE DESIGN
+         ============================================ */
+      @media (max-width: 768px) {
+        .icon-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .title-text,
+        .hub-title,
+        .cake-title,
+        .reasons-title,
+        .gift-title,
+        .letter-title {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Floating hearts background -->
+    <script>
+      for (let i = 0; i < 22; i++) {
+        const h = document.createElement('div');
+        h.className = 'floating-heart';
+        h.innerHTML = '❤';
+        h.style.left = Math.random() * 100 + 'vw';
+        h.style.animationDuration = 7 + Math.random() * 4 + 's';
+        h.style.animationDelay = Math.random() * 5 + 's';
+        document.body.appendChild(h);
+      }
+    </script>
+
+    <!-- ============================================
+         RESET BUTTON
+         ============================================ -->
+    <button class="reset-button" id="resetButton">🔄 RESET</button>
+
+    <!-- ============================================
+         MUSIC TOGGLE
+         ============================================ -->
+    <button class="music-toggle" id="musicToggle">🔊 MUSIC</button>
+
+    <!-- Hidden YouTube iframe for background music -->
+    <!-- "Je te laisserai des mots" by Patrick Watson -->
+    <div id="backgroundMusic"></div>
+
+    <!-- ============================================
+         SCREEN 1 - TITLE SCREEN
+         ============================================ -->
+    <div class="screen active" id="titleScreen">
+      <div class="title-content">
+        <div class="title-text">BIRTHDAY QUEST</div>
+        <button class="start-button" id="startButton">START</button>
+      </div>
+    </div>
+
+    <!-- ============================================
+         SCREEN 2 - JOURNEY HUB
+         ============================================ -->
+    <div class="screen" id="journeyHub">
+      <div class="hub-title">YOUR JOURNEY BEGINS</div>
+      <div class="hub-subtitle">CLICK ON EACH PICTURE FOR A SPECIAL SURPRISE!</div>
+      <div class="icon-grid">
+        <div class="icon-item" data-screen="cakeScreen">
+          <div class="icon-emoji">🍰</div>
+          <div class="icon-label">CAKE</div>
+        </div>
+        <div class="icon-item" data-screen="giftScreen">
+          <div class="icon-emoji">🎁</div>
+          <div class="icon-label">GIFT</div>
+        </div>
+        <div class="icon-item" data-screen="reasonsScreen">
+          <div class="icon-emoji">❤️</div>
+          <div class="icon-label">REASONS</div>
+        </div>
+        <div class="icon-item" data-screen="letterScreen">
+          <div class="icon-emoji">✉️</div>
+          <div class="icon-label">LETTER</div>
+        </div>
+      </div>
+      <button class="back-button" data-back="titleScreen">GO BACK</button>
+    </div>
+
+    <!-- ============================================
+         SCREEN 3 - CAKE PAGE
+         ============================================ -->
+    <div class="screen" id="cakeScreen">
+      <div class="cake-container">
+        <div class="cake-title">A CAKE JUST FOR YOU!</div>
+        <div class="cake-subtitle">I CAN'T BE THERE TO MAKE YOU ONE<br />SO HERE IS A VIRTUAL CAKE FOR NOW.</div>
+        <div class="cake-scene">
+          <div class="cake" id="cake">
+            <div class="cake-visual">
+              <div class="cake-layer">
+                <div class="cake-icing"></div>
+                <div class="candles-container">
+                  <div class="candle" data-candle="0"></div>
+                  <div class="candle" data-candle="1"></div>
+                  <div class="candle" data-candle="2"></div>
+                  <div class="candle" data-candle="3"></div>
+                  <div class="candle" data-candle="4"></div>
+                  <div class="candle" data-candle="5"></div>
+                  <div class="candle" data-candle="6"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cake-instructions-container">
+            <div class="make-wish" id="makeWish">Make a wish! ✨</div>
+            <div class="cake-instruction" id="cakeInstruction">Click on each candle to blow it out one by one</div>
+          </div>
+        </div>
+      </div>
+      <button class="back-button" data-back="journeyHub">GO BACK</button>
+    </div>
+
+    <!-- ============================================
+         SCREEN 4 - REASONS PAGE
+         ============================================ -->
+    <div class="screen" id="reasonsScreen">
+      <div class="reasons-title">REASONS WHY YOU'RE SPECIAL</div>
+      <div class="reasons-subtitle">CLICK ON THE HEARTS FOR SOME OF THE<br />REASONS WHY I LOVE YOU.</div>
+      <div class="progress-text" id="reasonsProgress">0/0</div>
+      <div class="garden-scene" id="gardenScene"></div>
+      <button class="back-button" data-back="journeyHub">GO BACK</button>
+
+      <!-- Heart Modal -->
+      <div class="heart-modal-backdrop" id="heartModalBackdrop"></div>
+      <div class="heart-modal" id="heartModal">
+        <div class="heart-modal-content" id="heartModalContent"></div>
+        <button class="heart-modal-close" id="heartModalClose">CLOSE</button>
+      </div>
+    </div>
+
+    <!-- ============================================
+         SCREEN 5 - GIFT PAGE
+         ============================================ -->
+    <div class="screen" id="giftScreen">
+      <div class="gift-title">YOUR GIFT</div>
+      <div class="gift-subtitle">
+        AND NOW FOR THE PART YOU HAVE BEEN WAITING FOR. CLICK THE PRESENT TO REVEAL<br />A RIDDLE ABOUT YOUR GIFT.
+      </div>
+      <div class="party-scene">
+        <div class="present-box" id="presentBox">
+          <div class="present-main">
+            <div class="present-ribbon-h"></div>
+            <div class="present-ribbon-v"></div>
+            <div class="present-bow"></div>
+            <div
+              class="present-lid"
+              style="
+                width: 300px;
+                height: 80px;
+                background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+                border: 4px solid #db2777;
+                position: absolute;
+                top: -80px;
+                left: 0;
+                border-radius: 16px 16px 0 0;
+              "
+            ></div>
+          </div>
+        </div>
+        <div class="riddle-container" id="riddleContainer">
+          <div class="riddle-text" id="riddleText"></div>
+          <input type="text" class="answer-input" id="answerInput" placeholder="TYPE YOUR ANSWER..." />
+          <button class="submit-button" id="submitAnswer">SUBMIT</button>
+          <div class="gift-message" id="giftMessage"></div>
+        </div>
+      </div>
+      <button class="back-button" data-back="journeyHub">GO BACK</button>
+    </div>
+
+    <!-- ============================================
+         SCREEN 6 - LETTER PAGE
+         ============================================ -->
+    <div class="screen" id="letterScreen">
+      <div class="letter-title">A LETTER TO YOU</div>
+      <div class="letter-subtitle">CLICK THE LETTER TO READ<br />A SPECIAL LETTER TO YOU.</div>
+      <div class="post-office-scene">
+        <div class="envelope" id="envelope">
+          <div class="envelope-flap"></div>
+          <div class="letter-content" id="letterContent">
+            <div class="letter-text" id="letterText"></div>
+          </div>
+        </div>
+      </div>
+      <button class="back-button" data-back="journeyHub">GO BACK</button>
+    </div>
+
+    <!-- ============================================
+         COMPLETION CONFETTI
+         ============================================ -->
+    <div class="completion-confetti" id="completionConfetti"></div>
+
+    <!-- ============================================
+         LOCK MODAL
+         ============================================ -->
+    <div class="lock-modal-backdrop" id="lockModalBackdrop"></div>
+    <div class="lock-modal" id="lockModal">
+      <div class="lock-modal-content" id="lockModalContent"></div>
+      <button class="lock-modal-close" id="lockModalClose">OK</button>
+    </div>
+
+    <script>
+      /* ============================================
+               EDITABLE CONTENT VARIABLES
+               Customize all text, reasons, riddle, and letter here!
+               ============================================ */
+
+      // Reasons for the heart page (edit these!)
+      const REASONS = [
+        'You have the most beautiful smile that lights up my world.',
+        'Your kindness and compassion inspire me every single day.',
+        "You make me laugh even when I thought I couldn't smile.",
+        'Your intelligence and creativity amaze me constantly.',
+        'You are my knoob and I love you for that.',
+        'Your presence makes every moment better.',
+        'You have the biggest heart and care so deeply for others, even though you do not see it.',
+        'You challenge me to be a better person every day, and in general but that is what I love about us.',
+        'Your loyalty to friendships, family, and me is unwavering and truly special.',
+        'You are my favorite person in the entire universe.',
+        'I love how we play games together and share those fun moments.',
+        'We are so different, but we never give up on each other, and that makes us stronger.',
+      ];
+
+      // Riddle and answer for the gift page
+      const RIDDLE = {
+        question:
+          'I rest close to your heart,\nBut I am not your chest.\nI can be delicate or bold,\nA treasure you might wear.\nWhat am I?',
+        answer: 'necklace', // Case-insensitive matching
+        message: 'Congratulations! You solved the riddle!\n\nFor a special message, read the letter for the why.',
+      };
+
+      // Letter content for the letter page
+      const LETTER_CONTENT = `My love,
+
+      I chose this for you because it reminded me of us.
+
+      The Skull Butterfly symbolizes transformation — the journey through darkness into light, and the strength it takes to keep going even when things aren't easy. Being far away from you isn't always easy, but it has shown me just how real, strong, and fearless our love is.
+
+      No matter the distance, we are always growing, always becoming something even more beautiful and unbreakable. This is a reminder that distance doesn't weaken us — it transforms us, and brings us closer to the life we're building together.
+
+      You are my world, my strength, and my light.
+
+      Until I can be in your arms, this carries a piece of me with you.
+
+      I love you, always.`;
+
+      // ============================================
+      // GAME STATE & PROGRESS TRACKING
+      // ============================================
+
+      let gameState = {
+        cakeVisited: false,
+        giftVisited: false,
+        reasonsVisited: false,
+        letterVisited: false,
+        heartsClicked: 0,
+        totalHearts: REASONS.length,
+        giftSolved: false,
+        letterRead: false,
+        cakeCompleted: false,
+        reasonsCompleted: false,
+        giftCompleted: false,
+        letterCompleted: false,
+      };
+
+      // Load progress from localStorage
+      function loadProgress() {
+        const saved = localStorage.getItem('birthdayQuestProgress');
+        if (saved) {
+          const savedState = JSON.parse(saved);
+          // Merge saved state, but ensure completion states are recalculated
+          gameState = { ...gameState, ...savedState };
+        }
+        // Always recalculate completion states to ensure they're correct
+        updateProgress();
+      }
+
+      // Save progress to localStorage
+      function saveProgress() {
+        localStorage.setItem('birthdayQuestProgress', JSON.stringify(gameState));
+        updateProgress();
+      }
+
+      // Update progress indicator
+      function updateProgress() {
+        // Update completion states - explicitly set based on actual completion
+        gameState.reasonsCompleted = gameState.heartsClicked >= gameState.totalHearts;
+        gameState.giftCompleted = gameState.giftSolved === true; // Explicitly check for true
+        gameState.letterCompleted = gameState.letterRead === true; // Explicitly check for true
+
+        let completed = 0;
+        if (gameState.cakeCompleted) completed++;
+        if (gameState.reasonsCompleted) completed++;
+        if (gameState.giftCompleted) completed++;
+        if (gameState.letterCompleted) completed++;
+
+        // Show completion confetti if all done (but skip confetti - user requested no confetti for letter)
+        // Confetti removed per user request
+
+        // Update icon states based on progression
+        updateIconStates();
+      }
+
+      // ============================================
+      // SCREEN NAVIGATION
+      // ============================================
+
+      function showScreen(screenId) {
+        // Hide all screens
+        document.querySelectorAll('.screen').forEach((screen) => {
+          screen.classList.remove('active');
+        });
+
+        // Show target screen
+        const targetScreen = document.getElementById(screenId);
+        if (targetScreen) {
+          targetScreen.classList.add('active');
+        }
+      }
+
+      // Start button
+      document.getElementById('startButton').addEventListener('click', () => {
+        showScreen('journeyHub');
+      });
+
+      // Function to check if an icon is locked
+      function isIconLocked(screenId) {
+        if (screenId === 'cakeScreen') return false; // Cake is always available
+        if (screenId === 'reasonsScreen') return !gameState.cakeCompleted;
+        if (screenId === 'giftScreen') return !gameState.reasonsCompleted;
+        if (screenId === 'letterScreen') return !gameState.giftCompleted;
+        return false;
+      }
+
+      // Function to get lock message
+      function getLockMessage(screenId) {
+        if (screenId === 'reasonsScreen') return 'You must complete the cake first!';
+        if (screenId === 'giftScreen') return 'You must complete the reasons first!';
+        if (screenId === 'letterScreen') return 'You must complete the gift first!';
+        return 'You must complete the previous steps first!';
+      }
+
+      // Function to show lock modal
+      function showLockModal(message) {
+        const modal = document.getElementById('lockModal');
+        const backdrop = document.getElementById('lockModalBackdrop');
+        const modalContent = document.getElementById('lockModalContent');
+        modalContent.textContent = message;
+        modal.classList.add('active');
+        backdrop.classList.add('active');
+      }
+
+      // Lock modal close handler
+      document.getElementById('lockModalClose').addEventListener('click', () => {
+        document.getElementById('lockModal').classList.remove('active');
+        document.getElementById('lockModalBackdrop').classList.remove('active');
+      });
+
+      document.getElementById('lockModalBackdrop').addEventListener('click', () => {
+        document.getElementById('lockModal').classList.remove('active');
+        document.getElementById('lockModalBackdrop').classList.remove('active');
+      });
+
+      // Function to update icon states based on progression
+      function updateIconStates() {
+        document.querySelectorAll('.icon-item').forEach((item) => {
+          const screenId = item.getAttribute('data-screen');
+          // Explicitly check lock status
+          const isLocked = isIconLocked(screenId);
+          if (isLocked) {
+            item.classList.add('locked');
+          } else {
+            item.classList.remove('locked');
+          }
+        });
+      }
+
+      // Journey hub icons
+      document.querySelectorAll('.icon-item').forEach((item) => {
+        item.addEventListener('click', () => {
+          const screenId = item.getAttribute('data-screen');
+
+          // Check if locked
+          if (isIconLocked(screenId)) {
+            showLockModal(getLockMessage(screenId));
+            return;
+          }
+
+          showScreen(screenId);
+
+          // Track visits
+          if (screenId === 'cakeScreen') gameState.cakeVisited = true;
+          if (screenId === 'giftScreen') gameState.giftVisited = true;
+          if (screenId === 'reasonsScreen') gameState.reasonsVisited = true;
+          if (screenId === 'letterScreen') gameState.letterVisited = true;
+          saveProgress();
+        });
+      });
+
+      // Back buttons
+      document.querySelectorAll('.back-button').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const targetScreen = btn.getAttribute('data-back');
+          showScreen(targetScreen);
+        });
+      });
+
+      // ============================================
+      // SCREEN 3 - CAKE INTERACTIONS
+      // ============================================
+
+      const cake = document.getElementById('cake');
+      const makeWish = document.getElementById('makeWish');
+      const cakeInstruction = document.getElementById('cakeInstruction');
+      const candles = cake.querySelectorAll('.candle');
+      const totalCandles = candles.length;
+      let candlesBlownCount = 0;
+      let blownCandles = new Set();
+
+      candles.forEach((candle) => {
+        candle.addEventListener('click', () => {
+          const candleIndex = parseInt(candle.getAttribute('data-candle'));
+
+          if (!blownCandles.has(candleIndex)) {
+            blownCandles.add(candleIndex);
+            candle.classList.add('blown');
+            candlesBlownCount++;
+
+            // When all candles are blown, show confetti and mark cake as completed
+            if (candlesBlownCount === totalCandles) {
+              createConfetti();
+              gameState.cakeCompleted = true;
+              gameState.cakeVisited = true;
+              saveProgress();
+            }
+          }
+        });
+      });
+
+      function createConfetti() {
+        // Create confetti all over the screen
+        for (let i = 0; i < 50; i++) {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          // Spread confetti across the entire screen width
+          confetti.style.left = Math.random() * 100 + 'vw';
+          confetti.style.top = Math.random() * 50 + 'vh';
+          confetti.style.background = ['#f59e0b', '#fbbf24', '#f472b6', '#10b981', '#3b82f6', '#ff4f8b'][
+            Math.floor(Math.random() * 6)
+          ];
+          confetti.style.animationDelay = Math.random() * 0.5 + 's';
+          confetti.style.animationDuration = 2 + Math.random() * 2 + 's';
+          document.body.appendChild(confetti);
+          setTimeout(() => confetti.remove(), 4000);
+        }
+      }
+
+      // ============================================
+      // SCREEN 4 - REASONS PAGE
+      // ============================================
+
+      const clickedHearts = new Set();
+
+      function createHearts() {
+        const gardenScene = document.getElementById('gardenScene');
+
+        // Clear existing hearts first to prevent duplication
+        gardenScene.querySelectorAll('.heart').forEach((heart) => heart.remove());
+
+        const sceneRect = gardenScene.getBoundingClientRect();
+
+        // Arrange hearts in rows of 4
+        const numHearts = REASONS.length;
+        const cols = 4; // Fixed to 4 per row
+        const rows = Math.ceil(numHearts / cols);
+        const padding = 40;
+        const cellWidth = (sceneRect.width - padding * 2) / cols;
+        const cellHeight = (sceneRect.height - padding * 2) / rows;
+
+        REASONS.forEach((reason, index) => {
+          if (clickedHearts.has(index)) return;
+
+          const heart = document.createElement('div');
+          heart.className = 'heart';
+          heart.dataset.index = index;
+
+          // Use grid positioning with slight randomization for natural look
+          const col = index % cols;
+          const row = Math.floor(index / cols);
+          const offsetX = (Math.random() - 0.5) * (cellWidth * 0.2);
+          const offsetY = (Math.random() - 0.5) * (cellHeight * 0.2);
+
+          const x = padding + col * cellWidth + cellWidth / 2 + offsetX;
+          const y = padding + row * cellHeight + cellHeight / 2 + offsetY;
+
+          heart.style.left = x + 'px';
+          heart.style.top = y + 'px';
+          heart.style.animationDelay = index * 0.2 + 's';
+
+          heart.addEventListener('click', () => {
+            if (!clickedHearts.has(index)) {
+              clickedHearts.add(index);
+              heart.classList.add('clicked');
+              gameState.heartsClicked++;
+              saveProgress();
+
+              setTimeout(() => {
+                heart.remove();
+                const isLastHeart = gameState.heartsClicked >= gameState.totalHearts;
+                showHeartModal(reason, isLastHeart);
+                updateReasonsProgress();
+              }, 500);
+            }
+          });
+
+          gardenScene.appendChild(heart);
+        });
+      }
+
+      function updateReasonsProgress() {
+        const progressEl = document.getElementById('reasonsProgress');
+        progressEl.textContent = `${gameState.heartsClicked}/${gameState.totalHearts}`;
+
+        if (gameState.heartsClicked >= gameState.totalHearts) {
+          gameState.reasonsCompleted = true;
+          gameState.reasonsVisited = true;
+          saveProgress();
+        }
+      }
+
+      function showHeartModal(content, isLastHeart = false) {
+        const modal = document.getElementById('heartModal');
+        const backdrop = document.getElementById('heartModalBackdrop');
+        const modalContent = document.getElementById('heartModalContent');
+        modalContent.textContent = content;
+        modal.classList.add('active');
+        backdrop.classList.add('active');
+
+        // Store if this is the last heart for the close handler
+        modal.dataset.isLastHeart = isLastHeart ? 'true' : 'false';
+      }
+
+      document.getElementById('heartModalClose').addEventListener('click', () => {
+        const modal = document.getElementById('heartModal');
+        const backdrop = document.getElementById('heartModalBackdrop');
+        const isLastHeart = modal.dataset.isLastHeart === 'true';
+
+        modal.classList.remove('active');
+        backdrop.classList.remove('active');
+
+        // If this was the last heart, show completion message
+        if (isLastHeart) {
+          setTimeout(() => {
+            showHeartModal(
+              '🎉 All reasons discovered! You are truly special! 🎉\n\nThere are so many more reasons why I love you, but not enough space to write them all. Just know that you mean everything to me.',
+              false,
+            );
+          }, 300);
+        }
+      });
+
+      document.getElementById('heartModalBackdrop').addEventListener('click', () => {
+        const modal = document.getElementById('heartModal');
+        const backdrop = document.getElementById('heartModalBackdrop');
+        const isLastHeart = modal.dataset.isLastHeart === 'true';
+
+        modal.classList.remove('active');
+        backdrop.classList.remove('active');
+
+        // If this was the last heart, show completion message
+        if (isLastHeart) {
+          setTimeout(() => {
+            showHeartModal(
+              '🎉 All reasons discovered! You are truly special! 🎉\n\nThere are so many more reasons why I love you, but not enough space to write them all. Just know that you mean everything to me.',
+              false,
+            );
+          }, 300);
+        }
+      });
+
+      // Initialize hearts when reasons screen is shown
+      const reasonsScreen = document.getElementById('reasonsScreen');
+      const observer = new MutationObserver(() => {
+        if (reasonsScreen.classList.contains('active')) {
+          createHearts();
+        }
+      });
+      observer.observe(reasonsScreen, {
+        attributes: true,
+        attributeFilter: ['class'],
+      });
+
+      // ============================================
+      // SCREEN 5 - GIFT PAGE
+      // ============================================
+
+      const presentBox = document.getElementById('presentBox');
+      const riddleContainer = document.getElementById('riddleContainer');
+      const riddleText = document.getElementById('riddleText');
+      const answerInput = document.getElementById('answerInput');
+      const submitButton = document.getElementById('submitAnswer');
+      const giftMessage = document.getElementById('giftMessage');
+      let presentOpened = false;
+
+      presentBox.addEventListener('click', () => {
+        if (!presentOpened) {
+          presentOpened = true;
+          presentBox.classList.add('opened');
+          setTimeout(() => {
+            riddleContainer.classList.add('active');
+            typewriterEffect(riddleText, RIDDLE.question);
+          }, 500);
+        }
+      });
+
+      submitButton.addEventListener('click', checkAnswer);
+      answerInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          checkAnswer();
+        }
+      });
+
+      function checkAnswer() {
+        const userAnswer = answerInput.value.trim().toLowerCase();
+        const correctAnswer = RIDDLE.answer.toLowerCase();
+
+        if (userAnswer === correctAnswer) {
+          giftMessage.textContent = RIDDLE.message;
+          giftMessage.classList.add('active');
+          answerInput.disabled = true;
+          submitButton.disabled = true;
+          // Hide skip button if it exists
+          const skipButton = document.getElementById('skipButton');
+          if (skipButton) {
+            skipButton.style.display = 'none';
+          }
+          gameState.giftSolved = true;
+          gameState.giftCompleted = true;
+          saveProgress();
+        } else {
+          answerInput.classList.add('shake');
+          giftMessage.textContent = "That's not it. Try again.";
+          giftMessage.classList.add('active');
+
+          // Add skip button if it doesn't exist
+          let skipButton = document.getElementById('skipButton');
+          if (!skipButton) {
+            skipButton = document.createElement('button');
+            skipButton.id = 'skipButton';
+            skipButton.className = 'submit-button';
+            skipButton.textContent = 'SKIP & PROCEED';
+            skipButton.style.marginTop = '1rem';
+            skipButton.style.display = 'none'; // Hidden initially
+            giftMessage.parentNode.appendChild(skipButton);
+
+            skipButton.addEventListener('click', () => {
+              giftMessage.textContent = RIDDLE.message;
+              answerInput.disabled = true;
+              submitButton.disabled = true;
+              skipButton.style.display = 'none';
+              gameState.giftSolved = true;
+              gameState.giftCompleted = true;
+              saveProgress();
+            });
+          }
+          skipButton.style.display = 'block';
+
+          setTimeout(() => {
+            answerInput.classList.remove('shake');
+            answerInput.value = '';
+          }, 500);
+        }
+      }
+
+      // ============================================
+      // SCREEN 6 - LETTER PAGE
+      // ============================================
+
+      const envelope = document.getElementById('envelope');
+      const letterContent = document.getElementById('letterContent');
+      const letterText = document.getElementById('letterText');
+      let letterOpened = false;
+
+      envelope.addEventListener('click', () => {
+        if (!letterOpened) {
+          letterOpened = true;
+          envelope.classList.add('active');
+          setTimeout(() => {
+            envelope.classList.add('opened');
+            setTimeout(() => {
+              letterContent.classList.add('active');
+              typewriterEffect(letterText, LETTER_CONTENT);
+              gameState.letterRead = true;
+              gameState.letterCompleted = true;
+              saveProgress();
+            }, 500);
+          }, 300);
+        }
+      });
+
+      // ============================================
+      // UTILITY FUNCTIONS
+      // ============================================
+
+      function typewriterEffect(element, text) {
+        element.textContent = '';
+        let index = 0;
+        const speed = 30; // milliseconds per character
+
+        function type() {
+          if (index < text.length) {
+            element.textContent += text.charAt(index);
+            index++;
+            setTimeout(type, speed);
+          }
+        }
+
+        type();
+      }
+
+      function showCompletionConfetti() {
+        const confettiContainer = document.getElementById('completionConfetti');
+        const colors = ['#f59e0b', '#fbbf24', '#f472b6', '#10b981', '#3b82f6', '#8b5cf6'];
+
+        for (let i = 0; i < 100; i++) {
+          const piece = document.createElement('div');
+          piece.className = 'confetti-piece';
+          piece.style.left = Math.random() * 100 + '%';
+          piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+          piece.style.animationDelay = Math.random() * 2 + 's';
+          piece.style.animationDuration = 2 + Math.random() * 2 + 's';
+          confettiContainer.appendChild(piece);
+
+          setTimeout(() => piece.remove(), 5000);
+        }
+      }
+
+      // ============================================
+      // RESET FUNCTIONALITY
+      // ============================================
+
+      function resetProgress() {
+        // Clear localStorage
+        localStorage.removeItem('birthdayQuestProgress');
+
+        // Reset game state to initial values
+        gameState = {
+          cakeVisited: false,
+          giftVisited: false,
+          reasonsVisited: false,
+          letterVisited: false,
+          heartsClicked: 0,
+          totalHearts: REASONS.length,
+          giftSolved: false,
+          letterRead: false,
+          cakeCompleted: false,
+          reasonsCompleted: false,
+          giftCompleted: false,
+          letterCompleted: false,
+          completionShown: false,
+        };
+
+        // Reset UI elements
+        // Reset cake candles
+        const resetCandles = document.querySelectorAll('.candle');
+        resetCandles.forEach((candle) => {
+          candle.classList.remove('blown');
+          const flame = candle.querySelector('.flame') || candle;
+          if (flame) flame.classList.remove('out');
+        });
+
+        // Reset candle state variables
+        candlesBlownCount = 0;
+        blownCandles = new Set();
+
+        // Reset hearts
+        const gardenScene = document.getElementById('gardenScene');
+        if (gardenScene) {
+          gardenScene.querySelectorAll('.heart').forEach((heart) => heart.remove());
+        }
+
+        // Reset gift
+        const presentBox = document.getElementById('presentBox');
+        if (presentBox) {
+          presentBox.classList.remove('opened');
+        }
+        const riddleContainer = document.getElementById('riddleContainer');
+        if (riddleContainer) {
+          riddleContainer.classList.remove('active');
+        }
+        const answerInput = document.getElementById('answerInput');
+        if (answerInput) {
+          answerInput.value = '';
+          answerInput.disabled = false;
+        }
+        const submitButton = document.getElementById('submitAnswer');
+        if (submitButton) {
+          submitButton.disabled = false;
+        }
+        const giftMessage = document.getElementById('giftMessage');
+        if (giftMessage) {
+          giftMessage.classList.remove('active');
+        }
+
+        // Reset letter
+        const envelope = document.getElementById('envelope');
+        if (envelope) {
+          envelope.classList.remove('active', 'opened');
+        }
+        const letterContent = document.getElementById('letterContent');
+        if (letterContent) {
+          letterContent.classList.remove('active');
+        }
+        const letterText = document.getElementById('letterText');
+        if (letterText) {
+          letterText.textContent = '';
+        }
+
+        // Update icon states
+        updateIconStates();
+
+        // Update reasons progress
+        updateReasonsProgress();
+
+        // Show confirmation
+        alert('Progress has been reset! All items are locked except the Cake.');
+
+        // Go back to journey hub
+        showScreen('journeyHub');
+      }
+
+      document.getElementById('resetButton').addEventListener('click', () => {
+        if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+          resetProgress();
+        }
+      });
+
+      // ============================================
+      // MUSIC TOGGLE - "Je te laisserai des mots" by Patrick Watson
+      // ============================================
+
+      let musicPlaying = true; // Start with music playing
+      let youtubePlayer = null;
+      // Video ID for "Je te laisserai des mots" by Patrick Watson
+      // To find the video ID:
+      // 1. Go to YouTube and search for "Je te laisserai des mots Patrick Watson"
+      // 2. Copy the video ID from the URL (the part after "watch?v=")
+      // 3. Replace 'VIDEO_ID_HERE' below with the actual video ID
+      // Example URL: https://www.youtube.com/watch?v=VIDEO_ID_HERE
+      const videoId = 'mcdO9UP0hp8'; // "Je te laisserai des mots" by Patrick Watson
+
+      // Load YouTube IFrame API
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      let playerReady = false;
+
+      // Initialize YouTube player when API is ready
+      window.onYouTubeIframeAPIReady = function () {
+        youtubePlayer = new YT.Player('backgroundMusic', {
+          videoId: videoId,
+          playerVars: {
+            autoplay: 1, // Enable autoplay
+            loop: 1,
+            playlist: videoId,
+            controls: 0,
+            modestbranding: 1,
+            rel: 0,
+            mute: 0, // Start unmuted (browser may block this, we'll handle it)
+          },
+          events: {
+            onReady: function (event) {
+              playerReady = true;
+              console.log('YouTube player is ready');
+              // Try to start playing immediately
+              try {
+                youtubePlayer.unMute();
+                youtubePlayer.playVideo();
+                // Update button to show music is on
+                const toggle = document.getElementById('musicToggle');
+                if (toggle) {
+                  toggle.textContent = '🔊 MUSIC ON';
+                }
+              } catch (error) {
+                console.log('Autoplay may be blocked, will try muted approach:', error);
+                // If autoplay with sound is blocked, try starting muted then unmuting
+                try {
+                  youtubePlayer.mute();
+                  youtubePlayer.playVideo();
+                  // Unmute after a short delay (this often works better with browser policies)
+                  setTimeout(() => {
+                    if (youtubePlayer && playerReady) {
+                      youtubePlayer.unMute();
+                    }
+                  }, 500);
+                  const toggle = document.getElementById('musicToggle');
+                  if (toggle) {
+                    toggle.textContent = '🔊 MUSIC ON';
+                  }
+                } catch (e) {
+                  console.error('Could not autoplay:', e);
+                  // If still blocked, user will need to click the button
+                  const toggle = document.getElementById('musicToggle');
+                  if (toggle) {
+                    toggle.textContent = '🔊 MUSIC (Click to play)';
+                    musicPlaying = false;
+                  }
+                }
+              }
+            },
+            onError: function (event) {
+              console.error('YouTube player error:', event.data);
+              playerReady = false;
+            },
+          },
+        });
+      };
+
+      document.getElementById('musicToggle').addEventListener('click', () => {
+        musicPlaying = !musicPlaying;
+        const toggle = document.getElementById('musicToggle');
+
+        if (musicPlaying) {
+          toggle.textContent = '🔊 MUSIC ON';
+          if (youtubePlayer && playerReady) {
+            try {
+              youtubePlayer.unMute();
+              youtubePlayer.playVideo();
+            } catch (error) {
+              console.error('Error playing video:', error);
+              toggle.textContent = '🔊 MUSIC (Loading...)';
+              // Retry after a short delay if player isn't ready
+              setTimeout(() => {
+                if (youtubePlayer && playerReady && musicPlaying) {
+                  youtubePlayer.unMute();
+                  youtubePlayer.playVideo();
+                }
+              }, 1000);
+            }
+          } else {
+            toggle.textContent = '🔊 MUSIC (Loading...)';
+            // Wait for player to be ready
+            const checkReady = setInterval(() => {
+              if (youtubePlayer && playerReady) {
+                clearInterval(checkReady);
+                if (musicPlaying) {
+                  youtubePlayer.unMute();
+                  youtubePlayer.playVideo();
+                  toggle.textContent = '🔊 MUSIC ON';
+                }
+              }
+            }, 500);
+            // Stop checking after 10 seconds
+            setTimeout(() => clearInterval(checkReady), 10000);
+          }
+        } else {
+          toggle.textContent = '🔇 MUSIC OFF';
+          if (youtubePlayer && playerReady) {
+            try {
+              youtubePlayer.pauseVideo();
+            } catch (error) {
+              console.error('Error pausing video:', error);
+            }
+          }
+        }
+      });
+
+      // ============================================
+      // INITIALIZATION
+      // ============================================
+
+      // Load saved progress on page load
+      loadProgress();
+
+      // Initialize icon states
+      updateIconStates();
+
+      // Double-check: ensure letter is locked if gift is not completed
+      // This ensures the letter shows as locked on initial load
+      const letterIcon = document.querySelector('.icon-item[data-screen="letterScreen"]');
+      if (letterIcon && !gameState.giftCompleted) {
+        letterIcon.classList.add('locked');
+      }
+
+      // Initialize reasons progress display
+      updateReasonsProgress();
+    </script>
+  </body>
+</html>
